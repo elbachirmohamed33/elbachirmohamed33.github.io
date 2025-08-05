@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Timeline Map - Prophet Muhammad ﷺ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gold: #D4AF37;
+            --deep-green: #1B4D3E;
+            --soft-beige: #F7F5F0;
+            --text-dark: #2C3E50;
+            --light-gray: #ECF0F1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--soft-beige);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--deep-green) 0%, #2E8B57 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-family: 'Amiri', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 0 2rem;
+        }
+
+        .nav-link {
+            color: var(--deep-green);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--primary-gold);
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .map-section {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .map-container {
+            position: relative;
+            height: 500px;
+            background: linear-gradient(135deg, #87CEEB 0%, #F0E68C 100%);
+            overflow: hidden;
+        }
+
+        .map-svg {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .location-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-gold);
+            border: 3px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .location-marker:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .location-marker.active {
+            background: #FF6B6B;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.3); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .location-label {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transform: translate(-50%, -120%);
+            white-space: nowrap;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .location-marker:hover .location-label {
+            opacity: 1;
+        }
+
+        .info-panel {
+            background: var(--soft-beige);
+            padding: 2rem;
+            min-height: 200px;
+        }
+
+        .info-panel h3 {
+            font-family: 'Amiri', serif;
+            font-size: 1.8rem;
+            color: var(--deep-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .date {
+            font-weight: 600;
+            color: var(--primary-gold);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .period-link {
+            background: var(--primary-gold);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .period-link:hover {
+            background: var(--deep-green);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .timeline-controls {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+        }
+
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-header h2 {
+            font-family: 'Amiri', serif;
+            color: var(--deep-green);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .period-display {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .current-period {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--deep-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .period-date {
+            font-size: 1.1rem;
+            color: var(--primary-gold);
+            font-weight: 600;
+        }
+
+        .timeline-player {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .play-button {
+            background: var(--primary-gold);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .play-button:hover {
+            background: var(--deep-green);
+            transform: scale(1.1);
+        }
+
+        .play-button.playing {
+            background: #FF6B6B;
+        }
+
+        .timeline-slider {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--light-gray);
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .timeline-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-gold);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-slider::-webkit-slider-thumb:hover {
+            background: var(--deep-green);
+            transform: scale(1.2);
+        }
+
+        .timeline-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-gold);
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-slider::-moz-range-thumb:hover {
+            background: var(--deep-green);
+            transform: scale(1.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .map-container {
+                height: 400px;
+            }
+            
+            .timeline-player {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .timeline-slider {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Interactive Timeline Map</h1>
+        <p>Explore the Life of Prophet Muhammad ﷺ</p>
+    </div>
+
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="fr/index_v2.html" class="nav-link">🏠 Home</a>
+            <a href="quiz.html" class="nav-link">🧠 Quiz</a>
+            <a href="fr/index_v2.html" class="nav-link">🇫🇷 Français</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="map-section">
+            <div class="map-container">
+                <!-- Arabian Peninsula SVG Map -->
+                <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+                    <!-- Arabian Peninsula outline -->
+                    <path d="M15,45 Q20,30 35,25 Q50,20 70,25 Q85,30 90,45 Q95,60 85,75 Q70,85 50,88 Q30,85 20,75 Q10,60 15,45 Z" 
+                          fill="#E8DCC0" stroke="#8B7355" stroke-width="0.5" opacity="0.7"/>
+                    
+                    <!-- Mountain ranges -->
+                    <path d="M25,40 Q30,35 35,40 Q40,35 45,40" fill="none" stroke="#8B7355" stroke-width="0.3" opacity="0.5"/>
+                    <path d="M60,50 Q65,45 70,50 Q75,45 80,50" fill="none" stroke="#8B7355" stroke-width="0.3" opacity="0.5"/>
+                    
+                    <!-- Decorative Islamic pattern -->
+                    <defs>
+                        <pattern id="islamicPattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+                            <circle cx="5" cy="5" r="1" fill="#D4AF37" opacity="0.3"/>
+                        </pattern>
+                    </defs>
+                    <rect width="100" height="100" fill="url(#islamicPattern)" opacity="0.3"/>
+                </svg>
+
+                <!-- Location markers -->
+                <div class="location-marker" data-period="1" style="left: 30%; top: 58%;">
+                    <div class="location-label">Mecca - Birth</div>
+                </div>
+                <div class="location-marker" data-period="2" style="left: 30%; top: 58%;">
+                    <div class="location-label">Mecca - Childhood</div>
+                </div>
+                <div class="location-marker" data-period="3" style="left: 30%; top: 58%;">
+                    <div class="location-label">Mecca - Youth</div>
+                </div>
+                <div class="location-marker" data-period="4" style="left: 32%; top: 55%;">
+                    <div class="location-label">Cave Hira</div>
+                </div>
+                <div class="location-marker" data-period="5" style="left: 30%; top: 58%;">
+                    <div class="location-label">Mecca - Secret Call</div>
+                </div>
+                <div class="location-marker" data-period="6" style="left: 30%; top: 58%;">
+                    <div class="location-label">Mecca - Public Call</div>
+                </div>
+                <div class="location-marker" data-period="7" style="left: 30%; top: 58%;">
+                    <div class="location-label">Mecca - Persecution</div>
+                </div>
+                <div class="location-marker" data-period="8" style="left: 28%; top: 47%;">
+                    <div class="location-label">Medina - Hijra</div>
+                </div>
+                <div class="location-marker" data-period="9" style="left: 28%; top: 47%;">
+                    <div class="location-label">Medina - Early State</div>
+                </div>
+                <div class="location-marker" data-period="10" style="left: 28%; top: 47%;">
+                    <div class="location-label">Medina - Battles</div>
+                </div>
+                <div class="location-marker" data-period="11" style="left: 28%; top: 47%;">
+                    <div class="location-label">Medina - Migration</div>
+                </div>
+                <div class="location-marker" data-period="12" style="left: 26%; top: 49%;">
+                    <div class="location-label">Badr - Victory</div>
+                </div>
+                <div class="location-marker" data-period="13" style="left: 28%; top: 47%;">
+                    <div class="location-label">Uhud - Trial</div>
+                </div>
+                <div class="location-marker" data-period="14" style="left: 28%; top: 47%;">
+                    <div class="location-label">Medina - Trench</div>
+                </div>
+                <div class="location-marker" data-period="15" style="left: 25%; top: 52%;">
+                    <div class="location-label">Hudaybiya - Peace</div>
+                </div>
+            </div>
+
+            <div class="info-panel" id="info-panel">
+                <!-- Period information will be displayed here -->
+            </div>
+        </div>
+
+        <div class="timeline-controls">
+            <div class="timeline-header">
+                <h2>Timeline Explorer</h2>
+                <p>Navigate through 15 key periods of the Prophet's ﷺ life</p>
+            </div>
+
+            <div class="period-display">
+                <div class="current-period" id="current-period">Period 1: The Promised Light</div>
+                <div class="period-date" id="period-date">571 CE</div>
+            </div>
+
+            <div class="timeline-player">
+                <button class="play-button" id="play-button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+                <input type="range" min="1" max="15" value="1" class="timeline-slider" id="timeline-slider">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const periods = [
+            { id: 1, name: "The Promised Light", year: "571 CE", description: "The blessed birth of Muhammad ﷺ in the holy city of Mecca, fulfilling ancient prophecies and marking the beginning of a new era for humanity.", x: 30, y: 58, link: "en/periode1_complete.html" },
+            { id: 2, name: "The Blessed Orphan", year: "571-595 CE", description: "The early years of the future Prophet, marked by divine protection and the shaping of his noble character.", x: 30, y: 58, link: "en/periode2_complete.html" },
+            { id: 3, name: "The Trustworthy Man", year: "595-610 CE", description: "Muhammad ﷺ becomes known as Al-Amin (The Trustworthy) in Meccan society, preparing for his prophetic mission.", x: 30, y: 58, link: "en/periode3_complete.html" },
+            { id: 4, name: "The First Revelation", year: "610 CE", description: "The life-changing moment in Cave Hira when Angel Gabriel brought the first verses of the Quran.", x: 32, y: 55, link: "en/periode4_complete.html" },
+            { id: 5, name: "The Silent Call", year: "610-613 CE", description: "Three years of secret preaching, building the foundation of the early Muslim community.", x: 30, y: 58, link: "en/periode5_complete.html" },
+            { id: 6, name: "The Public Proclamation", year: "613-616 CE", description: "The transition from secret to public preaching, facing the first opposition from Meccan society.", x: 30, y: 58, link: "en/periode6_complete.html" },
+            { id: 7, name: "The First Trials", year: "616-619 CE", description: "The period of intense persecution and the boycott of Banu Hashim, testing the faith of early Muslims.", x: 30, y: 58, link: "en/periode7_complete.html" },
+            { id: 8, name: "The Hijra", year: "622 CE", description: "The historic migration to Medina that marks the beginning of the Islamic calendar and the Muslim state.", x: 28, y: 47, link: "en/periode8_complete.html" },
+            { id: 9, name: "Medina the Radiant", year: "622-624 CE", description: "The establishment of the first Islamic state, the Constitution of Medina, and the brotherhood between Muhajirun and Ansar.", x: 28, y: 47, link: "en/periode9_complete.html" },
+            { id: 10, name: "The Great Battles I", year: "624 CE", description: "The decisive battles that secured the survival of the Muslim community, starting with the miraculous victory at Badr.", x: 28, y: 47, link: "en/periode10_complete.html" },
+            { id: 11, name: "The Hijra to Medina", year: "622 CE", description: "The historic migration from Mecca to Medina, marking the beginning of the Islamic calendar and the Muslim state.", x: 28, y: 47, link: "en/periode11_complete.html" },
+            { id: 12, name: "The Battle of Badr", year: "624 CE", description: "The Day of Furqan - The first decisive victory where 313 Muslims defeated 1000 Quraysh warriors with divine assistance.", x: 26, y: 49, link: "en/periode12_complete.html" },
+            { id: 13, name: "The Battle of Uhud", year: "625 CE", description: "The test of faith and resilience where Muslims learned crucial lessons about obedience, unity, and divine support.", x: 28, y: 47, link: "en/periode13_complete.html" },
+            { id: 14, name: "The Battle of the Trench", year: "627 CE", description: "Al-Khandaq - The great siege where 10,000 coalition warriors were defeated by divine intervention and strategic innovation.", x: 28, y: 47, link: "en/periode14_complete.html" },
+            { id: 15, name: "The Treaty of Hudaybiya", year: "628 CE", description: "Sulh al-Hudaybiya - The diplomatic masterpiece that opened the door to Islam's peaceful expansion throughout Arabia.", x: 25, y: 52, link: "en/periode15_complete.html" }
+        ];
+
+        let currentPeriod = 1;
+        let isPlaying = false;
+        let playInterval;
+
+        const slider = document.getElementById('timeline-slider');
+        const playButton = document.getElementById('play-button');
+        const currentPeriodElement = document.getElementById('current-period');
+        const periodDateElement = document.getElementById('period-date');
+        const infoPanel = document.getElementById('info-panel');
+
+        function updateDisplay(periodId) {
+            const period = periods[periodId - 1];
+            currentPeriod = periodId;
+            
+            // Update slider
+            slider.value = periodId;
+            
+            // Update text
+            currentPeriodElement.textContent = `Period ${periodId}: ${period.name}`;
+            periodDateElement.textContent = period.year;
+            
+            // Update info panel
+            infoPanel.innerHTML = `
+                <h3>${period.name}</h3>
+                <div class="date">${period.year}</div>
+                <div class="description">${period.description}</div>
+                ${period.link ? `<div style="margin-top: 1rem;"><a href="${period.link}" class="period-link">📖 Découvrir cette période</a></div>` : ''}
+            `;
+            
+            // Update map markers
+            document.querySelectorAll('.location-marker').forEach(marker => {
+                marker.classList.remove('active');
+            });
+            
+            const activeMarker = document.querySelector(`[data-period="${periodId}"]`);
+            if (activeMarker) {
+                activeMarker.classList.add('active');
+            }
+        }
+
+        slider.addEventListener('input', (e) => {
+            updateDisplay(parseInt(e.target.value));
+        });
+
+        playButton.addEventListener('click', () => {
+            if (isPlaying) {
+                clearInterval(playInterval);
+                isPlaying = false;
+                playButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+                playButton.classList.remove('playing');
+            } else {
+                isPlaying = true;
+                playButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+                playButton.classList.add('playing');
+                
+                playInterval = setInterval(() => {
+                    if (currentPeriod >= 15) {
+                        currentPeriod = 1;
+                    } else {
+                        currentPeriod++;
+                    }
+                    updateDisplay(currentPeriod);
+                }, 2000);
+            }
+        });
+
+        // Initialize with period 1
+        updateDisplay(1);
+    </script>
+</body>
+</html>

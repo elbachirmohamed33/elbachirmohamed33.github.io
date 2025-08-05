@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interactif - Biographie du Prophète Muhammad ﷺ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gold: #D4AF37;
+            --deep-green: #0F4C3A;
+            --soft-cream: #F8F6F0;
+            --warm-brown: #8B4513;
+            --text-dark: #2C1810;
+            --success-green: #27AE60;
+            --error-red: #E74C3C;
+            --light-blue: #3498DB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--soft-cream) 0%, #E8E2D4 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--deep-green) 0%, #2E8B57 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-family: 'Amiri', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            margin-bottom: 2rem;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 0 2rem;
+        }
+
+        .nav-link {
+            color: var(--deep-green);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--primary-gold);
+            color: white;
+        }
+
+        .quiz-container {
+            max-width: 900px;
+            margin: 0 auto 2rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .quiz-title {
+            font-family: 'Amiri', serif;
+            font-size: 2.5rem;
+            color: var(--deep-green);
+            margin-bottom: 1rem;
+        }
+
+        .quiz-subtitle {
+            color: var(--warm-brown);
+            font-size: 1.1rem;
+        }
+
+        .quiz-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--soft-cream);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border: 2px solid var(--primary-gold);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--deep-green);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--warm-brown);
+        }
+
+        .progress-container {
+            margin-bottom: 2rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-text {
+            font-weight: 600;
+            color: var(--deep-green);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #E0E0E0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-gold), var(--deep-green));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .question-card {
+            background: linear-gradient(135deg, var(--soft-cream), #F0EDE6);
+            padding: 2.5rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            border-left: 6px solid var(--primary-gold);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .question-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-number {
+            background: var(--primary-gold);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .question-category {
+            background: var(--deep-green);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .option {
+            background: white;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            padding: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .option:hover {
+            border-color: var(--primary-gold);
+            background: #FFF8E1;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .option.selected {
+            border-color: var(--primary-gold);
+            background: linear-gradient(135deg, #FFF8E1, #F4E18A);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .option.correct {
+            border-color: var(--success-green);
+            background: linear-gradient(135deg, #E8F5E8, #A8E6A3);
+        }
+
+        .option.incorrect {
+            border-color: var(--error-red);
+            background: linear-gradient(135deg, #FFE8E8, #FFAAAA);
+        }
+
+        .option-letter {
+            background: var(--primary-gold);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success-green);
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--error-red);
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 1.1rem;
+        }
+
+        .explanation {
+            background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+            border: 2px solid var(--light-blue);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            color: var(--deep-green);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .explanation-text {
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 0;
+        }
+
+        .quiz-button {
+            background: var(--primary-gold);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .quiz-button:hover:not(:disabled) {
+            background: var(--deep-green);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .quiz-button:disabled {
+            background: #CCCCCC;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .quiz-button.finish {
+            background: var(--success-green);
+        }
+
+        .quiz-button.finish:hover {
+            background: #219A52;
+        }
+
+        .results-card {
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(135deg, var(--soft-cream), #F0EDE6);
+            border-radius: 20px;
+            border: 3px solid var(--primary-gold);
+        }
+
+        .results-score {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--deep-green);
+            margin-bottom: 1rem;
+        }
+
+        .results-message {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--warm-brown);
+            margin-bottom: 2rem;
+        }
+
+        .results-details {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border: 2px solid var(--primary-gold);
+        }
+
+        .home-button {
+            background: var(--deep-green);
+            color: white;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .home-button:hover {
+            background: var(--primary-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .quiz-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .quiz-controls {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .question-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Quiz Interactif</h1>
+        <p>Testez vos connaissances sur la biographie du Prophète Muhammad ﷺ</p>
+    </div>
+
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="en/index_v2.html" class="nav-link">🏠 Accueil</a>
+            <a href="carte_interactive.html" class="nav-link">🗺️ Carte Interactive</a>
+            <a href="audio.html" class="nav-link">🎵 Audio</a>
+            <a href="galerie.html" class="nav-link">🖼️ Galerie</a>
+            <a href="fr/index_v2.html" class="nav-link">🇫🇷 Français</a>
+            <a href="ar/index_v2.html" class="nav-link">🇸🇦 العربية</a>
+        </div>
+    </nav>
+
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h2 class="quiz-title">🧠 Quiz de la Sira</h2>
+            <p class="quiz-subtitle">Explorez votre connaissance de la vie du Prophète ﷺ</p>
+        </div>
+
+        <div class="quiz-stats">
+            <div class="stat-item">
+                <div class="stat-number" id="totalQuestions">25</div>
+                <div class="stat-label">Questions</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="scoreDisplay">0/0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="timeSpent">0:00</div>
+                <div class="stat-label">Temps</div>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-info">
+                <span class="progress-text" id="progressText">Question 1 sur 25</span>
+                <span class="progress-text" id="progressPercent">4%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div id="quizContent">
+            <!-- Quiz content will be loaded here -->
+        </div>
+
+        <div class="quiz-controls">
+            <button class="quiz-button" id="prevButton" onclick="previousQuestion()">← Précédent</button>
+            <button class="quiz-button" id="nextButton" onclick="nextQuestion()">Suivant →</button>
+            <button class="quiz-button finish" id="finishButton" onclick="finishQuiz()" style="display: none;">Terminer le Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz data with 25 comprehensive questions
+        const quizData = [
+            {
+                question: "En quelle année est né le Prophète Muhammad ﷺ ?",
+                options: ["569 EC", "570 EC", "571 EC", "572 EC"],
+                correct: 1,
+                category: "Naissance",
+                explanation: "Le Prophète Muhammad ﷺ est né en 570 EC, connue comme l'Année de l'Éléphant, marquant le début d'une nouvelle ère pour l'humanité."
+            },
+            {
+                question: "Comment s'appelait la mère du Prophète ﷺ ?",
+                options: ["Khadija", "Aminah", "Fatimah", "Aisha"],
+                correct: 1,
+                category: "Famille",
+                explanation: "Aminah bint Wahb était la mère du Prophète ﷺ. Elle mourut quand il avait six ans, le laissant orphelin sous la garde de son grand-père."
+            },
+            {
+                question: "Quel âge avait le Prophète ﷺ quand il reçut la première révélation ?",
+                options: ["35 ans", "38 ans", "40 ans", "42 ans"],
+                correct: 2,
+                category: "Révélation",
+                explanation: "Le Prophète ﷺ avait 40 ans quand l'ange Gabriel lui apporta la première révélation dans la grotte de Hira en 610 EC."
+            },
+            {
+                question: "Combien d'années a duré la da'wa secrète à La Mecque ?",
+                options: ["2 ans", "3 ans", "4 ans", "5 ans"],
+                correct: 1,
+                category: "Prédication",
+                explanation: "La période de prédication secrète a duré 3 ans (610-613 EC), construisant les fondations de la communauté musulmane naissante."
+            },
+            {
+                question: "Qui fut la première personne à embrasser l'Islam ?",
+                options: ["Abu Bakr", "Ali ibn Abi Talib", "Khadija", "Zayd ibn Harithah"],
+                correct: 2,
+                category: "Premiers Musulmans",
+                explanation: "Khadija bint Khuwaylid, l'épouse du Prophète ﷺ, fut la première personne à croire en son message et à embrasser l'Islam."
+            },
+            {
+                question: "En quelle année a eu lieu la Hijra vers Médine ?",
+                options: ["620 EC", "621 EC", "622 EC", "623 EC"],
+                correct: 2,
+                category: "Hijra",
+                explanation: "La Hijra historique vers Médine eut lieu en 622 EC, marquant le début du calendrier islamique et de l'État musulman."
+            },
+            {
+                question: "Combien de musulmans participèrent à la bataille de Badr ?",
+                options: ["300", "313", "320", "350"],
+                correct: 1,
+                category: "Batailles",
+                explanation: "313 musulmans participèrent à la bataille de Badr, le 'Jour du Furqan', remportant une victoire décisive contre 1000 guerriers Quraysh."
+            },
+            {
+                question: "Quelle bataille est surnommée 'le Jour du Furqan' ?",
+                options: ["Uhud", "Badr", "Khandaq", "Hunayn"],
+                correct: 1,
+                category: "Batailles",
+                explanation: "La bataille de Badr est appelée 'Yawm al-Furqan' (le Jour du Furqan) car elle marqua la distinction claire entre la vérité et le faux."
+            },
+            {
+                question: "Qui suggéra de creuser une tranchée autour de Médine ?",
+                options: ["Abu Bakr", "Umar ibn al-Khattab", "Salman al-Farisi", "Ali ibn Abi Talib"],
+                correct: 2,
+                category: "Batailles",
+                explanation: "Salman al-Farisi (le Perse) suggéra la stratégie de la tranchée, utilisant une tactique militaire perse pour défendre Médine."
+            },
+            {
+                question: "Combien de guerriers formaient la coalition lors de la bataille de Khandaq ?",
+                options: ["8000", "9000", "10000", "12000"],
+                correct: 2,
+                category: "Batailles",
+                explanation: "Une coalition de 10 000 guerriers de différentes tribus assiégea Médine lors de la bataille de Khandaq (la Tranchée)."
+            },
+            {
+                question: "En quelle année fut signé le traité de Hudaybiya ?",
+                options: ["626 EC", "627 EC", "628 EC", "629 EC"],
+                correct: 2,
+                category: "Traités",
+                explanation: "Le traité de Hudaybiya fut signé en 628 EC (6 AH), ouvrant la voie à l'expansion pacifique de l'Islam en Arabie."
+            },
+            {
+                question: "Combien de pèlerins accompagnèrent le Prophète ﷺ à Hudaybiya ?",
+                options: ["1200", "1400", "1500", "1600"],
+                correct: 1,
+                category: "Traités",
+                explanation: "Environ 1400 à 1500 musulmans accompagnèrent le Prophète ﷺ pour la Umrah qui aboutit au traité de Hudaybiya."
+            },
+            {
+                question: "Qui était le négociateur principal des Quraysh à Hudaybiya ?",
+                options: ["Abu Sufyan", "Suhayl ibn Amr", "Safwan ibn Umayya", "Khalid ibn al-Walid"],
+                correct: 1,
+                category: "Traités",
+                explanation: "Suhayl ibn Amr était le négociateur expert des Quraysh, connu pour son éloquence et ses compétences diplomatiques."
+            },
+            {
+                question: "Comment s'appelle le serment d'allégeance fait sous l'arbre à Hudaybiya ?",
+                options: ["Bay'at al-Aqaba", "Bay'at al-Ridwan", "Bay'at al-Nisa", "Bay'at al-Harb"],
+                correct: 1,
+                category: "Serments",
+                explanation: "Bay'at al-Ridwan (le Serment de la Satisfaction Divine) fut prêté sous l'arbre quand les musulmans crurent qu'Uthman avait été tué."
+            },
+            {
+                question: "Quelle sourate fut révélée après le traité de Hudaybiya ?",
+                options: ["Al-Anfal", "Al-Fath", "At-Tawbah", "Al-Hashr"],
+                correct: 1,
+                category: "Révélations",
+                explanation: "La sourate Al-Fath (La Victoire) fut révélée, décrivant le traité de Hudaybiya comme une 'victoire claire' malgré les apparences."
+            },
+            {
+                question: "En quelle année La Mecque fut-elle conquise pacifiquement ?",
+                options: ["628 EC", "629 EC", "630 EC", "631 EC"],
+                correct: 2,
+                category: "Conquêtes",
+                explanation: "La Mecque fut conquise pacifiquement en 630 EC (8 AH), deux ans après le traité de Hudaybiya, accomplissant la vision prophétique."
+            },
+            {
+                question: "Combien d'hommes le Prophète ﷺ emmena-t-il pour la conquête de La Mecque ?",
+                options: ["8000", "10000", "12000", "15000"],
+                correct: 1,
+                category: "Conquêtes",
+                explanation: "Le Prophète ﷺ marcha sur La Mecque avec 10 000 hommes, une force si impressionnante qu'elle découragea toute résistance."
+            },
+            {
+                question: "Qui était surnommé 'Sayf Allah al-Maslul' (l'Épée Dégainée d'Allah) ?",
+                options: ["Ali ibn Abi Talib", "Khalid ibn al-Walid", "Sa'd ibn Abi Waqqas", "Zubayr ibn al-Awwam"],
+                correct: 1,
+                category: "Compagnons",
+                explanation: "Khalid ibn al-Walid fut surnommé 'Sayf Allah al-Maslul' par le Prophète ﷺ après sa conversion et ses victoires militaires."
+            },
+            {
+                question: "Quelle fut la dernière bataille dirigée personnellement par le Prophète ﷺ ?",
+                options: ["Hunayn", "Tabuk", "Muta", "Khaybar"],
+                correct: 0,
+                category: "Batailles",
+                explanation: "La bataille de Hunayn (630 EC) fut la dernière bataille que le Prophète ﷺ dirigea personnellement contre les tribus Hawazin et Thaqif."
+            },
+            {
+                question: "Combien de fois le Prophète ﷺ accomplit-il le Hajj ?",
+                options: ["Une fois", "Deux fois", "Trois fois", "Quatre fois"],
+                correct: 0,
+                category: "Hajj",
+                explanation: "Le Prophète ﷺ n'accomplit le Hajj qu'une seule fois, en 632 EC, connu sous le nom de Hajjat al-Wada' (le Pèlerinage d'Adieu)."
+            },
+            {
+                question: "Dans quel mois le Prophète ﷺ est-il décédé ?",
+                options: ["Safar", "Rabi' al-Awwal", "Rabi' al-Thani", "Jumada al-Ula"],
+                correct: 1,
+                category: "Décès",
+                explanation: "Le Prophète ﷺ est décédé en Rabi' al-Awwal 632 EC (11 AH), après avoir accompli sa mission prophétique."
+            },
+            {
+                question: "Combien d'années a duré la mission prophétique ?",
+                options: ["20 ans", "21 ans", "22 ans", "23 ans"],
+                correct: 3,
+                category: "Mission",
+                explanation: "La mission prophétique dura 23 ans : 13 ans à La Mecque et 10 ans à Médine, de 610 à 632 EC."
+            },
+            {
+                question: "Qui fut le premier calife après le Prophète ﷺ ?",
+                options: ["Ali ibn Abi Talib", "Umar ibn al-Khattab", "Abu Bakr as-Siddiq", "Uthman ibn Affan"],
+                correct: 2,
+                category: "Califat",
+                explanation: "Abu Bakr as-Siddiq fut élu premier calife après le décès du Prophète ﷺ, unifiant la communauté musulmane."
+            },
+            {
+                question: "Comment s'appelait le cheval du Prophète ﷺ ?",
+                options: ["Buraq", "Duldul", "Sakhr", "Murtajaz"],
+                correct: 1,
+                category: "Animaux",
+                explanation: "Duldul était le nom de la mule du Prophète ﷺ, cadeau du gouverneur d'Égypte. Buraq était la monture du voyage nocturne."
+            },
+            {
+                question: "Quelle était la tribu du Prophète ﷺ ?",
+                options: ["Banu Hashim", "Banu Umayya", "Banu Taym", "Banu Adi"],
+                correct: 0,
+                category: "Généalogie",
+                explanation: "Le Prophète ﷺ appartenait à Banu Hashim, une branche noble de la tribu Quraysh, gardiens de la Kaaba."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let selectedAnswers = new Array(quizData.length).fill(-1);
+        let quizFinished = false;
+        let startTime = Date.now();
+
+        function initializeQuiz() {
+            document.getElementById('totalQuestions').textContent = quizData.length;
+            showQuestion(0);
+            updateProgress();
+            updateButtons();
+            startTimer();
+        }
+
+        function startTimer() {
+            setInterval(() => {
+                if (!quizFinished) {
+                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    document.getElementById('timeSpent').textContent = 
+                        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        function showQuestion(index) {
+            const question = quizData[index];
+            const quizContent = document.getElementById('quizContent');
+            
+            quizContent.innerHTML = `
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="question-number">Question ${index + 1}/${quizData.length}</div>
+                        <div class="question-category">${question.category}</div>
+                    </div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options-container">
+                        ${question.options.map((option, i) => `
+                            <div class="option ${getOptionClass(index, i)}" 
+                                 onclick="${!quizFinished ? `selectOption(${index}, ${i})` : ''}"
+                                 data-option="${i}">
+                                <div class="option-letter">${String.fromCharCode(65 + i)}</div>
+                                <div class="option-text">${option}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${(quizFinished || selectedAnswers[index] !== -1) ? `
+                        <div class="explanation show">
+                            <div class="explanation-title">
+                                💡 Explication
+                            </div>
+                            <div class="explanation-text">${question.explanation}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            updateButtons();
+            updateProgress();
+            updateProgressText();
+        }
+
+        function getOptionClass(questionIndex, optionIndex) {
+            if (!quizFinished && selectedAnswers[questionIndex] === -1) return '';
+            if (!quizFinished && selectedAnswers[questionIndex] === optionIndex) return 'selected';
+            if (quizFinished) {
+                if (optionIndex === quizData[questionIndex].correct) return 'correct';
+                if (selectedAnswers[questionIndex] === optionIndex && optionIndex !== quizData[questionIndex].correct) return 'incorrect';
+            }
+            return '';
+        }
+
+        function selectOption(questionIndex, optionIndex) {
+            if (quizFinished) return;
+            
+            selectedAnswers[questionIndex] = optionIndex;
+            showQuestion(questionIndex);
+            updateScore();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function updateButtons() {
+            const prevButton = document.getElementById('prevButton');
+            const nextButton = document.getElementById('nextButton');
+            const finishButton = document.getElementById('finishButton');
+
+            prevButton.disabled = currentQuestion === 0;
+            
+            if (quizFinished) {
+                nextButton.style.display = currentQuestion === quizData.length - 1 ? 'none' : 'inline-block';
+                finishButton.style.display = 'none';
+            } else {
+                nextButton.disabled = selectedAnswers[currentQuestion] === -1;
+                
+                if (currentQuestion === quizData.length - 1) {
+                    nextButton.style.display = 'none';
+                    finishButton.style.display = selectedAnswers[currentQuestion] !== -1 ? 'inline-block' : 'none';
+                } else {
+                    nextButton.style.display = 'inline-block';
+                    finishButton.style.display = 'none';
+                }
+            }
+        }
+
+        function updateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const progress = ((currentQuestion + 1) / quizData.length) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        function updateProgressText() {
+            const progressText = document.getElementById('progressText');
+            const progressPercent = document.getElementById('progressPercent');
+            
+            progressText.textContent = `Question ${currentQuestion + 1} sur ${quizData.length}`;
+            progressPercent.textContent = `${Math.round(((currentQuestion + 1) / quizData.length) * 100)}%`;
+        }
+
+        function updateScore() {
+            const correctAnswers = selectedAnswers.filter((answer, index) => 
+                answer === quizData[index].correct
+            ).length;
+            
+            const answeredQuestions = selectedAnswers.filter(answer => answer !== -1).length;
+            
+            document.getElementById('scoreDisplay').textContent = 
+                `${correctAnswers}/${answeredQuestions}`;
+        }
+
+        function finishQuiz() {
+            quizFinished = true;
+            showResults();
+        }
+
+        function showResults() {
+            const correctAnswers = selectedAnswers.filter((answer, index) => 
+                answer === quizData[index].correct
+            ).length;
+            
+            const totalQuestions = quizData.length;
+            const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            
+            let message = "";
+            let emoji = "";
+            if (percentage >= 90) {
+                message = "🌟 Excellent ! Vous maîtrisez parfaitement la biographie du Prophète ﷺ";
+                emoji = "🏆";
+            } else if (percentage >= 80) {
+                message = "👏 Très bien ! Vous avez d'excellentes connaissances sur la Sira";
+                emoji = "🥇";
+            } else if (percentage >= 70) {
+                message = "✨ Bien ! Vous avez de bonnes connaissances sur la Sira";
+                emoji = "🥈";
+            } else if (percentage >= 60) {
+                message = "📚 Pas mal ! Continuez à approfondir vos connaissances";
+                emoji = "🥉";
+            } else {
+                message = "📖 Il est recommandé d'étudier davantage la biographie prophétique";
+                emoji = "📘";
+            }
+
+            const quizContent = document.getElementById('quizContent');
+            quizContent.innerHTML = `
+                <div class="results-card">
+                    <div style="font-size: 5rem; margin-bottom: 1rem;">${emoji}</div>
+                    <div class="results-score">${percentage}%</div>
+                    <div class="results-message">${message}</div>
+                    <div class="results-details">
+                        <p><strong>Score final :</strong> ${correctAnswers}/${totalQuestions} réponses correctes</p>
+                        <p><strong>Temps total :</strong> ${minutes}:${seconds.toString().padStart(2, '0')}</p>
+                        <p><strong>Moyenne :</strong> ${Math.round((elapsed / totalQuestions) * 10) / 10} secondes par question</p>
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <a href="en/index_v2.html" class="home-button">🏠 Retour à l'accueil</a>
+                        <button class="quiz-button" onclick="reviewAnswers()">👁️ Revoir les réponses</button>
+                        <button class="quiz-button" onclick="restartQuiz()">🔄 Recommencer</button>
+                    </div>
+                </div>
+            `;
+
+            document.querySelector('.quiz-controls').style.display = 'none';
+        }
+
+        function reviewAnswers() {
+            currentQuestion = 0;
+            showQuestion(0);
+            document.querySelector('.quiz-controls').style.display = 'flex';
+            updateButtons();
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            selectedAnswers = new Array(quizData.length).fill(-1);
+            quizFinished = false;
+            startTime = Date.now();
+            showQuestion(0);
+            document.querySelector('.quiz-controls').style.display = 'flex';
+            updateButtons();
+            updateScore();
+        }
+
+        // Initialize quiz when page loads
+        initializeQuiz();
+    </script>
+</body>
+</html>
