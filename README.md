@@ -6,23 +6,11 @@ Application web progressive (PWA) dédiée à la biographie complète du Prophè
 
 ### 📖 **Contenu Éducatif Authentique**
 - **15 périodes détaillées** de la vie du Prophète ﷺ
-- **Saint Coran complet** avec traductions françaises et phonétique
 - **Quiz interactifs** pour tester les connaissances
 - **Cartes historiques** interactives des lieux saints
-- **Galerie éducative** avec contexte historique
-- **Audio intégré** pour une expérience immersive
 
-### 🌍 **Support Multilingue**
+### 🌍 **Support Français**
 - **Français** : Version complète avec toutes les fonctionnalités
-- **Anglais** : Traduction des contenus principaux
-- **Arabe** : Interface RTL avec typographie authentique
-
-### 📱 **Application PWA Moderne**
-- **Installation native** sur mobile et desktop
-- **Mode hors ligne** complet avec cache intelligent
-- **Notifications push** éducatives
-- **Service Worker** pour performance optimale
-- **Interface responsive** adaptée à tous les écrans
 
 ### 💰 **Monétisation Respectueuse**
 - **Google AdSense** uniquement
@@ -54,27 +42,15 @@ sira-optimized/
 │   ├── style_optimized.css  # Styles principaux
 │   ├── style_premium.css    # Styles avancés
 │   └── adsense.css          # Styles publicités
-├── js/
-│   ├── app-main.js          # Logique application principale
-│   ├── quran-data.js        # Base de données Coran
-│   └── adsense.js           # Gestion Google AdSense
-├── 
-└── # Versions Multilingues
+└── # Versions Francais complète
     ├── fr/                  # Version française complète
-    ├── en/                  # Version anglaise
-    └── ar/                  # Version arabe (RTL)
-```
+    ```
 
 ## 🎯 Pages Principales
-
-### **Application Complète**
-- **`app-sira-quran.html`** - Application PWA principale combinant Sira et Coran
 
 ### **Outils Éducatifs**
 - **`carte_interactive.html`** - Exploration géographique de l'époque du Prophète ﷺ
 - **`quiz.html`** - Tests de connaissances avec 25 questions authentiques
-- **`audio.html`** - Lecteur audio avec récitations et lectures
-- **`galerie.html`** - Galerie historique avec images contextuelles
 
 ### **Support et Monétisation**
 - **`soutenir.html`** - Page de donations PayPal pour soutenir le projet
@@ -126,17 +102,6 @@ git add .
 # Premier commit
 git commit -m "🕌 Application Sira & Coran - Version complète PWA
 
-✨ Fonctionnalités:
-- Application PWA Sira du Prophète ﷺ + Saint Coran
-- 15 périodes historiques détaillées
-- Quiz interactifs et cartes historiques  
-- Support multilingue (FR/EN/AR)
-- Mode hors ligne complet
-- Google AdSense intégré respectueusement
-- Design islamique moderne et responsive
-
-📱 Technologies: PWA, Service Workers, JavaScript ES6+, CSS3 Grid/Flexbox"
-```
 
 ### **Étape 4 : Publier sur GitHub**
 
@@ -224,3 +189,4 @@ Projet sous licence MIT - Libre d'utilisation pour l'éducation islamique.
 **Qu'Allah ﷻ bénisse ce travail et en fasse un moyen de guidance pour tous. Ameen.**
 
 *Développé avec ❤️ et dévotion pour la Oumma musulmane*
+
