@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Vérification du site statique (HTML/CSS/JS) pour GitHub Pages",
+			"command": "echo Vérification des fichiers HTML, CSS et JS...; dir /b /s *.html *.css *.js; echo Test de validité HTML...; for %f in (*.html) do echo %f & type \"%f\" | findstr /i \"<html\"",
+			"group": "build",
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}
